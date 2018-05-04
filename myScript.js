@@ -23,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. */
 
+//Title
 const Title = () => {
   return (
     <div id="title" className="text-center">
@@ -36,6 +37,8 @@ class Modal extends React.Component {
     super(props);
   }
   render() {
+    const { nameInput, itemsInput, nameOutput, itemsOutput, box, handleNameChange, handleItemsChange, handleSubmit } = this.props;    
+    
     return (
       <div>
         <div
@@ -49,9 +52,6 @@ class Modal extends React.Component {
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title add-edit" id="recipeModalLabel">
-                  Add a new recipe
-                </h5>
                 <button
                   type="button"
                   className="close"
@@ -60,6 +60,9 @@ class Modal extends React.Component {
                   >
                   <span aria-hidden="true">&times;</span>
                 </button>
+                <h3 className="modal-title add-edit" id="recipeModalLabel">
+                  Add a new recipe
+                </h3>                
               </div>
               <div className="modal-body">
                 <form>
@@ -74,8 +77,8 @@ class Modal extends React.Component {
                       type="text"
                       className="form-control"
                       id="recipe-name"
-                      value={this.props.name}
-                      onChange={this.props.handleNameChange}
+                      value={nameInput}
+                      onChange={handleNameChange}
                       placeholder="Name of the recipe"
                       />
                   </div>
@@ -89,8 +92,8 @@ class Modal extends React.Component {
                     <textarea
                       className="form-control"
                       id="ingredients-text"
-                      value={this.props.items}
-                      onChange={this.props.handleItemsChange}
+                      value={itemsInput}
+                      onChange={handleItemsChange}
                       placeholder="Separate, Ingredients, With, Commas"
                       />
                   </div>
@@ -99,86 +102,102 @@ class Modal extends React.Component {
               <div className="modal-footer">
                 <button
                   type="button"
-                  className="btn btn-outline-secondary"
+                  className="btn-all btn-close"
                   data-dismiss="modal"
                   >
                   Close
                 </button>
                 <button
                   type="submit"
-                  className="btn btn-outline-primary"
+                  className="btn-all btn-add"
                   data-dismiss="modal"
-                  onClick={this.props.handleSubmit}
+                  onClick={handleSubmit}
                   >
                   <i className="fas fa-plus-circle" /> Recipe
                 </button>
               </div>
             </div>
           </div>
-        </div>
-        <div id="view-edit-modal">
-          <div
-            className="modal focus"
-            id="editModal"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="editModalLabel"
-            aria-hidden="true"
-            >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header text-center">
-                  {/*title*/}
-                  <button
-                    type="button"
-                    className="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                    >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div className="modal-body edit-body">
-                  <form>
-                    <div className="form-group text-center">
-                      <label
-                        htmlFor="ingredients-text"
-                        className="col-form-label"
-                        >
-                        <div className="ingreds">Ingredients</div>
-                      </label>
-                      <ul className="list-group">{/*list*/}</ul>
-                    </div>
-                  </form>
-                </div>
-                <div className="modal-footer edit-footer">
-                  <button
-                    type="button"
-                    className="btn btn-outline-danger"
-                    data-dismiss="modal"
-                    onClick={this.handleDelete}
-                    >
-                    Delete
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-outline-dark"
-                    data-dismiss="modal"
-                    onClick={this.handleSubmit}
-                    >
-                    Edit
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        </div>        
       </div>
     );
   }
 }
 
-class App extends React.Component {
+const PanelGroup = ReactBootstrap.PanelGroup;
+const Panel = ReactBootstrap.Panel;
+
+class ControlledPanelGroup extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.handleSelect = this.handleSelect.bind(this);
+
+    this.state = {
+      activeKey: '1'
+    };
+  }
+
+  handleSelect(activeKey) {
+    this.setState({ activeKey });
+  }
+
+  render() {
+    const { nameInput, itemsInput, nameOutput, itemsOutput, box} = this.props;
+    
+    const recipeStats = box.map(el => (      
+      <Panel eventKey={box.indexOf(el) + 1} key={box.indexOf(el) + 1}>
+        <Panel.Heading>
+          <Panel.Title toggle key={el.title + box.indexOf(el) + 1}>{el.title}</Panel.Title>
+        </Panel.Heading>
+        <Panel.Body collapsible>
+          <div className="ingreds text-center">
+            <h5>Ingredients</h5>
+          </div>
+          <ul className="list-group">{el.ingreds.map(item => (
+              <li className="list-group-item list-group-item-action" key={item}>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <div id="panel-footer" className="modal-footer">
+            <button
+              type="button"
+              className="btn-all btn-del"
+              data-dismiss="modal"
+              >
+              Delete
+            </button>
+            <button
+              type="submit"
+              className="btn-all btn-add"
+              data-dismiss="modal"
+              onClick={null}
+              >
+              Edit
+            </button>
+          </div>
+        </Panel.Body>
+        <div className="counter">
+          <h6>recipe #{box.indexOf(el) + 1}</h6>
+        </div>
+      </Panel>
+    ));
+    
+    return (
+      <PanelGroup
+        accordion
+        id="accordion-controlled"
+        activeKey={this.state.activeKey}
+        onSelect={this.handleSelect}
+      >
+        {recipeStats}
+      </PanelGroup>
+    );
+  }
+}
+
+class BoxApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -193,8 +212,7 @@ class App extends React.Component {
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleItemsChange = this.handleItemsChange.bind(this);
     this.addNewRecipe = this.addNewRecipe.bind(this);
-    this.handleRecipeOpen = this.handleRecipeOpen.bind(this);
-    this.openRecipe = this.openRecipe.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
   }
 
@@ -211,17 +229,19 @@ class App extends React.Component {
     });
   }
 
-  handleRecipeOpen(event) {
+  handleEdit() {
     this.setState({
-      nameOutput: event.target.value
+      nameInput: "",
+      itemsInput: ""
     });
   }
 
-  openRecipe() {
-    this.setState({});
+  handleDelete() {
+    this.setState({
+      nameInput: "",
+      itemsInput: ""
+    });
   }
-
-  handleDelete() {}
 
   addNewRecipe() {
     function Recipe(title, ingreds) {
@@ -234,7 +254,7 @@ class App extends React.Component {
     console.log(name);
     console.log(items);
     if (name === "") {
-      name = "Untitled";
+      name = "Untitled recipe";
       this.setState({
         box: [...this.state.box, new Recipe(name, items)]
       });
@@ -255,77 +275,43 @@ class App extends React.Component {
 
   render() {
     console.log(this.state.box);
-    const { nameInput, itemsInput, nameOutput, itemsOutput, box } = this.state;
-    //const title = nameOutput.map(el => (<h3>{el}</h3>));
+    const { nameInput, itemsInput, nameOutput, itemsOutput, box } = this.state;       
 
-    //----------------------------------------
-    const title = box.map(el => (
-      <h5 className="modal-title edit" id="recipeModalLabel" key={el.title}>
-        {el.title}
-      </h5>
-    ));
-    const list = box.map(el =>
-                         el.ingreds.map(item => (
+    /*const list = box.map(el => el.ingreds.map(item => (
       <li className="list-group-item list-group-item-action" key={item}>
         {item}
       </li>
-    ))
-                        );
-    //-----------------------------------------
-
-    const recipeStats = box.map(el => (
-      <tr>
-        <td id={box.indexOf(el) + 1} key={box.indexOf(el) + 1}>
-          {box.indexOf(el) + 1}
-        </td>
-        <td id="names" key={el.title + box.indexOf(el) + 1}>
-          <a
-            href="#"
-            data-toggle="modal"
-            data-target="#editModal"
-            value={el.title}
-            onClick={this.handleRecipeOpen}
-            >
-            {el.title}
-          </a>
-        </td>
-        <td id="ingred-string" key={el.ingreds.length + box.indexOf(el) + 1}>
-          {el.ingreds.join(",")}
-        </td>
-      </tr>
-    ));
+    )));*/
 
     return (
       <div>
         <Title />
         <Modal
-          name={nameInput}
+          nameInput={nameInput}
           handleNameChange={this.handleNameChange}
-          items={itemsInput}
+          itemsInput={itemsInput}
           handleItemsChange={this.handleItemsChange}
           handleSubmit={this.handleSubmit}
+          nameOutput={nameOutput}
+          itemsOutput={itemsOutput}
+          box={box}
           />
         <div className="box">
-          <div className="table-responsive">
-            <table className="table table-striped table-light">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th id="names">Name</th>
-                  <th>Ingredients</th>
-                </tr>
-              </thead>
-              <tbody>{recipeStats}</tbody>
-            </table>
-            <div className="footer">
-              <h6>A box for all your favorite recipes!</h6>
-            </div>
+          <ControlledPanelGroup
+            nameInput={nameInput}
+            itemsInput={itemsInput}           
+            nameOutput={nameOutput}
+            itemsOutput={itemsOutput}
+            box={box}
+            />
+          <div className="info">
+            <h6>A box for all your favorite recipes!</h6>
           </div>
         </div>
         <div className="button text-center">
           <button
             type="button"
-            className="btn btn-outline-dark"
+            className="btn-all btn-add"
             data-toggle="modal"
             data-target="#recipeModal"
             >
@@ -337,4 +323,5 @@ class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById("content"));
+ReactDOM.render(<BoxApp />, document.getElementById("content"));
+
