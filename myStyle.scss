@@ -30,11 +30,11 @@ SOFTWARE. */
   border-radius: $radius;
 }
 
-@mixin box-shadow($x, $y, $blur, $c) { 
-  -webkit-box-shadow: $x $y $blur $c;
-  -moz-box-shadow: $x $y $blur $c;
-  -ms-box-shadow: $x $y $blur $c;
-  box-shadow: $x $y $blur $c;
+@mixin box-shadow($x, $y, $blur, $spred, $c) { 
+  -webkit-box-shadow: $x $y $blur $spred $c;
+  -moz-box-shadow: $x $y $blur $spred $c;
+  -ms-box-shadow: $x $y $blur $spred $c;
+  box-shadow: $x $y $blur $spred $c;
 }
 
 body {
@@ -58,28 +58,33 @@ body {
   overflow: auto;
 }
 
-.table-light, .table-dark {
-  margin-top: 0;
-  margin-bottom: 0;
-  td {
-    font-size: 14px;
-    padding-top: 6px;
-    padding-bottom: 6px;
-  }
-  th {   
-    font-size: 13px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+.info {
+  background-color: #343a40;
+  color: #fff;
+  padding: 4px;
+  @include box-shadow(0px, 1px, 2px, 0px, #222);
+  @include radius(5px);
+  h6 {
+    opacity: .7;
+    margin: 8px;
+    text-align: center;
+    font-size: 12px;
   }
 }
 
-.footer {
-  background-color: #fdfdfe;
-  padding: 4px;
-  @include box-shadow(0px, 1px, 1px, #222);
+.counter {
+  margin: 0 auto;
+  background: #aaa;
+  background: -webkit-linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa); 
+  background: linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa);
+  @include box-shadow(0px, 2px, 3px, 0px, #5b646d);
+  @include radius(5px);
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
   h6 {
+    margin: 0 auto;
+    margin-bottom: 0px;
     opacity: .7;
-    margin-top: 7px;
     text-align: center;
     font-size: 12px;
   }
@@ -101,7 +106,50 @@ body {
 .ingreds {
   font-family: 'Lobster', cursive;
   color: #343a40;
-  font-size: 15px;
+  h5 {
+    font-size: 16px;
+  }
+}
+
+.panel-group {
+  margin-bottom: 0 !important;
+}
+
+.panel {  
+  /*padding-left: 3px;
+  padding-right: 3px;*/
+}
+
+.panel-default > .panel-heading {
+  background: #aaa;
+  background: -webkit-linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa); 
+  background: linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa);  
+}
+
+.panel-body {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.panel-title {
+  font-family: 'Lobster', cursive;
+  font-weight: normal;
+  font-size: 18px;
+  color: #343a40;
+  a {
+    transition: .2s; 
+  }   
+}
+
+.panel-title {
+  a:hover {
+    color: #dc3545;
+    transition: .2s;
+  }  
+}
+
+#panel-footer {
+  padding: 15px 15px 10px 15px;
 }
 
 .list-group {
@@ -118,14 +166,78 @@ body {
   margin-top: 15px;  
 }
 
-.btn {
+.btn-all {
+  margin-left: 5px;
+  border: 2px solid #343a40;
   @include radius(50px);
-  font-size: 16px;
+  font-size: 14px;
   padding: 4px 10px 4px 10px;
 }
 
+.btn-add {
+  color: #343a40;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-add:hover {
+  color: #f2f2f2;
+  background-color: #343a40;
+  transition: .2s;
+  
+}
+
+.btn-add:active {
+  border: 2px solid #999;
+  color: #f2f2f2;
+  background-color: #343a40;
+  transition: .2s;  
+}
+
+.btn-close {
+  opacity: .5;
+  color: #343a40;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-close:hover {
+  opacity: .5;
+  color: #f2f2f2;
+  background-color: #343a40;
+  transition: .2s;  
+}
+
+.btn-close:active {
+  opacity: .5;
+  border: 2px solid #999;
+  color: #f2f2f2;
+  background-color: #343a40;
+  transition: .2s;  
+}
+
+.btn-del {
+  color: #dc3545;
+  border-color: #dc3545;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-del:hover {
+  color: #f2f2f2;
+  background-color: #dc3545;
+  transition: .2s;  
+}
+
+.btn-del:active {
+  border: 2px solid #ffadad;
+  color: #f2f2f2;
+  background-color: #dc3545;
+  transition: .2s;  
+}
+
 button:focus {
-  outline: 0;
+    outline:none !important;
 }
 
 .focus {
@@ -149,21 +261,36 @@ button:focus {
 }
 
 #ingredients-text {
-  height: 90px;
+  height: 118px;
 }
 
 .modal-content {
   /*background: #343a40;
   color: #fefefe;*/
   margin: 0 auto;
-  margin-top: 255px;
+  margin-top: 246px;
   width: 425px;
   border: 3px solid #555;
   @include radius(20px);
-  @include box-shadow(0px, 0px, 20px, #333);
+  @include box-shadow(0px, 0px, 20px, 0px, #333);
 }
 
 .modal-header, .modal-footer {
+}
+
+.col-form-label {
+  font-size: 18px;
+  font-weight: normal;
+}
+
+.form-control {
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+}
+
+.form-control:focus {
+  border: 1px solid #00d8ff;
+  @include box-shadow(0px, 0px, 0px, 2px, #aff1ff);
+  transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 }
 
 .add-edit {
@@ -185,13 +312,8 @@ button:focus {
   @include radius(0px 100px 100px 0px);
 }
 
-a {
-  transition: .2s;
-}
-
-a:hover {
+a:hover {  
   text-decoration: none;
-  transition: .2s;
 }
 
 a:focus {
