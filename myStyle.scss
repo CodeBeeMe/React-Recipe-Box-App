@@ -149,7 +149,6 @@ body {
 }
 
 #panel-footer {
-  padding: 15px 15px 10px 15px;
 }
 
 .list-group {
@@ -297,16 +296,21 @@ button:focus {
   font-family: 'Lobster', cursive;
 }
 
-::-webkit-scrollbar {
-  background: #343a40;
-  width: 10px;
+.box::-webkit-scrollbar {
+  background: transparent;
+  width: 4px;
   @include radius(0px 100px 100px 0px);
 }
 
-::-webkit-scrollbar-thumb {  
-  background: #fff;
-  border: 1px solid #fff;
-  border-left: none;
+.box::-webkit-scrollbar-track {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.box::-webkit-scrollbar-thumb {  
+  background: #aaa;
+  border: 2px solid #343a40;
+  border-right: none;
   border-top: none;
   border-bottom: none;
   @include radius(0px 100px 100px 0px);
@@ -320,3 +324,4 @@ a:focus {
   outline: none;
   text-decoration: none;
 }
+  
