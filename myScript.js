@@ -37,8 +37,17 @@ class Modal extends React.Component {
     super(props);
   }
   render() {
-    const { nameInput, itemsInput, nameOutput, itemsOutput, box, handleNameChange, handleItemsChange, handleSubmit } = this.props;    
-    
+    const {
+      nameInput,
+      itemsInput,
+      nameOutput,
+      itemsOutput,
+      box,
+      handleNameChange,
+      handleItemsChange,
+      handleSubmit
+    } = this.props;
+
     return (
       <div>
         <div
@@ -62,7 +71,7 @@ class Modal extends React.Component {
                 </button>
                 <h3 className="modal-title add-edit" id="recipeModalLabel">
                   Add a new recipe
-                </h3>                
+                </h3>
               </div>
               <div className="modal-body">
                 <form>
@@ -79,7 +88,7 @@ class Modal extends React.Component {
                       id="recipe-name"
                       value={nameInput}
                       onChange={handleNameChange}
-                      placeholder="Name of the recipe"
+                      placeholder="Name your recipe"
                       />
                   </div>
                   <div className="form-group">
@@ -118,7 +127,7 @@ class Modal extends React.Component {
               </div>
             </div>
           </div>
-        </div>        
+        </div>
       </div>
     );
   }
@@ -127,14 +136,14 @@ class Modal extends React.Component {
 const PanelGroup = ReactBootstrap.PanelGroup;
 const Panel = ReactBootstrap.Panel;
 
-class ControlledPanelGroup extends React.Component {
+class Accordion extends React.Component {
   constructor(props, context) {
     super(props, context);
 
     this.handleSelect = this.handleSelect.bind(this);
 
     this.state = {
-      activeKey: '1'
+      activeKey: "1"
     };
   }
 
@@ -143,18 +152,30 @@ class ControlledPanelGroup extends React.Component {
   }
 
   render() {
-    const { nameInput, itemsInput, nameOutput, itemsOutput, box} = this.props;
-    
-    const recipeStats = box.map(el => (      
+    const {
+      nameInput,
+      itemsInput,
+      nameOutput,
+      itemsOutput,
+      box,
+      entry,
+      handleEdit,
+      handleDelete
+    } = this.props;
+
+    const recipeStats = box.map(el => (
       <Panel eventKey={box.indexOf(el) + 1} key={box.indexOf(el) + 1}>
         <Panel.Heading>
-          <Panel.Title toggle key={el.title + box.indexOf(el) + 1}>{el.title}</Panel.Title>
+          <Panel.Title toggle key={el.title + box.indexOf(el) + 1}>
+            {el.title}
+          </Panel.Title>
         </Panel.Heading>
         <Panel.Body collapsible>
           <div className="ingreds text-center">
             <h5>Ingredients</h5>
           </div>
-          <ul className="list-group">{el.ingreds.map(item => (
+          <ul className="list-group">
+            {el.ingreds.map(item => (
               <li className="list-group-item list-group-item-action" key={item}>
                 {item}
               </li>
@@ -164,15 +185,16 @@ class ControlledPanelGroup extends React.Component {
             <button
               type="button"
               className="btn-all btn-del"
-              data-dismiss="modal"
+              value={el.title}
+              onClick={handleDelete}
               >
               Delete
             </button>
             <button
-              type="submit"
+              type="button"
               className="btn-all btn-add"
-              data-dismiss="modal"
-              onClick={null}
+              value={el.title}
+              //onClick={handleEntryChange}
               >
               Edit
             </button>
@@ -183,14 +205,14 @@ class ControlledPanelGroup extends React.Component {
         </div>
       </Panel>
     ));
-    
+
     return (
       <PanelGroup
         accordion
         id="accordion-controlled"
         activeKey={this.state.activeKey}
         onSelect={this.handleSelect}
-      >
+        >
         {recipeStats}
       </PanelGroup>
     );
@@ -205,12 +227,13 @@ class BoxApp extends React.Component {
       itemsInput: "",
       nameOutput: "",
       itemsOutput: [],
-      box: []
+      box: [],
+      entry: ""
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleItemsChange = this.handleItemsChange.bind(this);
+    this.handleItemsChange = this.handleItemsChange.bind(this);    
     this.addNewRecipe = this.addNewRecipe.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
@@ -236,31 +259,44 @@ class BoxApp extends React.Component {
     });
   }
 
-  handleDelete() {
+  handleDelete(event) {
     this.setState({
-      nameInput: "",
-      itemsInput: ""
+      entry: event.target.value
     });
+    setTimeout(() => { 
+      function removeByAttr(arr, attr, value) {
+      let i = arr.length;
+      while (i--) {
+        if (
+          arr[i] &&
+          arr[i].hasOwnProperty(attr) &&
+          (arguments.length > 2 && arr[i][attr] === value)
+        ) {
+          arr.splice(i, 1);
+        }
+      }
+      return arr;
+    };
+    this.setState({
+      box: removeByAttr(this.state.box, "title", this.state.entry)
+    }); }, 10);  
   }
 
   addNewRecipe() {
-    function Recipe(title, ingreds) {
-      //Recipe Object Constructor
-      this.title = title;
-      this.ingreds = ingreds;
-    }
     let name = this.state.nameInput;
     const items = this.state.itemsInput.split(","); // ingredients array
+
     console.log(name);
     console.log(items);
+
     if (name === "") {
       name = "Untitled recipe";
       this.setState({
-        box: [...this.state.box, new Recipe(name, items)]
+        box: [...this.state.box, { title: name, ingreds: items }]
       });
     } else {
       this.setState({
-        box: [...this.state.box, new Recipe(name, items)]
+        box: [...this.state.box, { title: name, ingreds: items }]
       });
     }
   }
@@ -275,13 +311,15 @@ class BoxApp extends React.Component {
 
   render() {
     console.log(this.state.box);
-    const { nameInput, itemsInput, nameOutput, itemsOutput, box } = this.state;       
-
-    /*const list = box.map(el => el.ingreds.map(item => (
-      <li className="list-group-item list-group-item-action" key={item}>
-        {item}
-      </li>
-    )));*/
+    console.log(this.state.entry);
+    const {
+      nameInput,
+      itemsInput,
+      nameOutput,
+      itemsOutput,
+      box,
+      entry
+    } = this.state;
 
     return (
       <div>
@@ -297,12 +335,15 @@ class BoxApp extends React.Component {
           box={box}
           />
         <div className="box">
-          <ControlledPanelGroup
+          <Accordion
             nameInput={nameInput}
-            itemsInput={itemsInput}           
+            itemsInput={itemsInput}
             nameOutput={nameOutput}
             itemsOutput={itemsOutput}
             box={box}
+            entry={entry}
+            handleEdit={this.handleEdit}
+            handleDelete={this.handleDelete}
             />
           <div className="info">
             <h6>A box for all your favorite recipes!</h6>
@@ -324,4 +365,3 @@ class BoxApp extends React.Component {
 }
 
 ReactDOM.render(<BoxApp />, document.getElementById("content"));
-
