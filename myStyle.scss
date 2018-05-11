@@ -53,7 +53,7 @@ body {
   width: 420px;
   height: 400px;
   margin: 0 auto;
-  border: 3px solid #343a40;
+  border: 5px solid #343a40;
   @include radius(20px);
   overflow: auto;
 }
@@ -74,9 +74,7 @@ body {
 
 .counter {
   margin: 0 auto;
-  background: #aaa;
-  background: -webkit-linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa); 
-  background: linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa);
+  background: #f4f9ff;
   @include box-shadow(0px, 2px, 3px, 0px, #5b646d);
   @include radius(5px);
   border-top-right-radius: 0px;
@@ -121,9 +119,9 @@ body {
 }
 
 .panel-default > .panel-heading {
-  background: #aaa;
-  background: -webkit-linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa); 
-  background: linear-gradient(to right, #fff, #dbdbdb, #fff, #aaa);  
+  background: #aab7c4;
+  background: -webkit-linear-gradient(to right, #f4f9ff, #aab7c4, #f4f9ff, #aab7c4); 
+  background: linear-gradient(to right, #f4f9ff, #aab7c4, #f4f9ff, #aab7c4);  
 }
 
 .panel-body {
@@ -187,7 +185,7 @@ body {
 }
 
 .btn-add:active {
-  border: 2px solid #999;
+  border: 2px solid #aab7c4;
   color: #f2f2f2;
   background-color: #343a40;
   transition: .2s;  
@@ -308,7 +306,7 @@ button:focus {
 }
 
 .box::-webkit-scrollbar-thumb {  
-  background: #aaa;
+  background: #aab7c4;
   border: 2px solid #343a40;
   border-right: none;
   border-top: none;
