@@ -43,6 +43,7 @@ class Modal extends React.Component {
       nameOutput,
       itemsOutput,
       box,
+      handleClose,
       handleNameChange,
       handleItemsChange,
       handleSubmit
@@ -113,6 +114,7 @@ class Modal extends React.Component {
                   type="button"
                   className="btn-all btn-close"
                   data-dismiss="modal"
+                  onClick={handleClose}
                   >
                   Close
                 </button>
@@ -139,18 +141,16 @@ const Panel = ReactBootstrap.Panel;
 class Accordion extends React.Component {
   constructor(props, context) {
     super(props, context);
-
-    this.handleSelect = this.handleSelect.bind(this);
-
     this.state = {
       activeKey: "1"
     };
+    this.handleSelect = this.handleSelect.bind(this);    
   }
 
   handleSelect(activeKey) {
     this.setState({ activeKey });
   }
-
+  
   render() {
     const {
       nameInput,
@@ -192,9 +192,13 @@ class Accordion extends React.Component {
             </button>
             <button
               type="button"
+              id={el.title}
               className="btn-all btn-add"
+              data-toggle="modal"
+              data-target="#recipeModal"
+              data-items={el.ingreds}
               value={el.title}
-              //onClick={handleEntryChange}
+              onClick={handleEdit}
               >
               Edit
             </button>
@@ -230,13 +234,14 @@ class BoxApp extends React.Component {
       box: [],
       entry: ""
     };
-
+    
+    this.handleEdit = this.handleEdit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.addNewRecipe = this.addNewRecipe.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleItemsChange = this.handleItemsChange.bind(this);    
-    this.addNewRecipe = this.addNewRecipe.bind(this);
-    this.handleEdit = this.handleEdit.bind(this);
-    this.handleDelete = this.handleDelete.bind(this);
+    this.handleItemsChange = this.handleItemsChange.bind(this);
   }
 
   handleNameChange(event) {
@@ -246,16 +251,23 @@ class BoxApp extends React.Component {
   }
 
   handleItemsChange(event) {
-    event.preventDefault();
     this.setState({
       itemsInput: event.target.value
     });
   }
-
-  handleEdit() {
+  
+  handleClose() {
     this.setState({
       nameInput: "",
       itemsInput: ""
+    });
+  }
+  
+  handleEdit(event) {
+    let recipe = document.getElementById(event.target.value);    
+    this.setState({
+      nameInput: event.target.value,
+      itemsInput: recipe.dataset.items
     });
   }
 
@@ -263,41 +275,45 @@ class BoxApp extends React.Component {
     this.setState({
       entry: event.target.value
     });
-    setTimeout(() => { 
-      function removeByAttr(arr, attr, value) {
-      let i = arr.length;
-      while (i--) {
-        if (
-          arr[i] &&
-          arr[i].hasOwnProperty(attr) &&
-          (arguments.length > 2 && arr[i][attr] === value)
-        ) {
-          arr.splice(i, 1);
+    setTimeout(() => {
+      function removeByAttr(arr, attr, val) {
+        for (let i = arr.length; i--;) {
+          if (arr[i][attr] === val) {
+            arr.splice(i, 1);
+          }
         }
-      }
-      return arr;
-    };
-    this.setState({
-      box: removeByAttr(this.state.box, "title", this.state.entry)
-    }); }, 10);  
+        return arr;
+      };
+      this.setState({
+        box: removeByAttr(this.state.box, "title", this.state.entry)
+      }); }, 10);
   }
 
   addNewRecipe() {
     let name = this.state.nameInput;
-    const items = this.state.itemsInput.split(","); // ingredients array
-
-    console.log(name);
-    console.log(items);
-
-    if (name === "") {
-      name = "Untitled recipe";
-      this.setState({
-        box: [...this.state.box, { title: name, ingreds: items }]
-      });
-    } else {
-      this.setState({
-        box: [...this.state.box, { title: name, ingreds: items }]
-      });
+    let items = this.state.itemsInput.split(","); // ingredients array
+    
+    function blockDuplicates(arr, attr, val) {
+      for (let i = arr.length; i--;) {
+        if (arr[i][attr] === val) 
+          return true;
+      }
+      return false;
+    };
+    //console.log(name);
+    //console.log(items);
+    
+    if (!blockDuplicates(this.state.box, 'title', name)) {
+      if (name === "") {
+        name = "Untitled recipe";
+        this.setState({
+          box: [...this.state.box, { title: name, ingreds: items }]
+        });
+      } else {
+        this.setState({
+          box: [...this.state.box, { title: name, ingreds: items }]
+        });
+      }
     }
   }
 
@@ -310,6 +326,8 @@ class BoxApp extends React.Component {
   }
 
   render() {
+    console.log(this.state.nameInput);
+    console.log(this.state.itemsInput);
     console.log(this.state.box);
     console.log(this.state.entry);
     const {
@@ -325,6 +343,7 @@ class BoxApp extends React.Component {
       <div>
         <Title />
         <Modal
+          handleClose={this.handleClose}
           nameInput={nameInput}
           handleNameChange={this.handleNameChange}
           itemsInput={itemsInput}
@@ -365,3 +384,4 @@ class BoxApp extends React.Component {
 }
 
 ReactDOM.render(<BoxApp />, document.getElementById("content"));
+
