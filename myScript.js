@@ -32,6 +32,17 @@ const Title = () => {
   );
 };
 
+//Footer
+const Footer = () => {
+  return (
+    <div id="footer" className="text-center">
+      <h6>Designed and coded by <a href="https://github.com/Madness2aMaze" target="_blank" id="footbar" title="©2018 Cătălin Anghel-Ursu @Madness2aMaze - All Rights Reserved">@Madness2aMaze ©2018 - All Rights Reserved</a> | <a href="http://codepen.io/Madness2aMaze/" title="More of my works" target="_blank"><i className="fab fa-codepen"></i></a> | <a href="https://www.freecodecamp.com/" target="_blank" title="FreeCodeCamp" ><i className="fab fa-free-code-camp"></i></a>
+      </h6>
+    </div>
+  );
+};
+
+
 class Modal extends React.Component {
   constructor(props) {
     super(props);
@@ -40,8 +51,6 @@ class Modal extends React.Component {
     const {
       nameInput,
       itemsInput,
-      nameOutput,
-      itemsOutput,
       box,
       handleClose,
       handleNameChange,
@@ -55,7 +64,9 @@ class Modal extends React.Component {
           className="modal focus"
           id="recipeModal"
           tabIndex="-1"
-          role="dialog"
+          role="dialog"          
+          data-keyboard="false"
+          data-backdrop="static"
           aria-labelledby="recipeModalLabel"
           aria-hidden="true"
           >
@@ -67,6 +78,7 @@ class Modal extends React.Component {
                   className="close"
                   data-dismiss="modal"
                   aria-label="Close"
+                  onClick={handleClose}
                   >
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -120,6 +132,7 @@ class Modal extends React.Component {
                 </button>
                 <button
                   type="submit"
+                  id="add"
                   className="btn-all btn-add"
                   data-dismiss="modal"
                   onClick={handleSubmit}
@@ -155,8 +168,6 @@ class Accordion extends React.Component {
     const {
       nameInput,
       itemsInput,
-      nameOutput,
-      itemsOutput,
       box,
       entry,
       handleEdit,
@@ -193,7 +204,7 @@ class Accordion extends React.Component {
             <button
               type="button"
               id={el.title}
-              className="btn-all btn-add"
+              className="btn-all btn-edit"
               data-toggle="modal"
               data-target="#recipeModal"
               data-items={el.ingreds}
@@ -229,8 +240,6 @@ class BoxApp extends React.Component {
     this.state = {
       nameInput: "",
       itemsInput: "",
-      nameOutput: "",
-      itemsOutput: [],
       box: [],
       entry: ""
     };
@@ -238,18 +247,34 @@ class BoxApp extends React.Component {
     this.handleEdit = this.handleEdit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.addNewRecipe = this.addNewRecipe.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleNameChange = this.handleNameChange.bind(this);
     this.handleItemsChange = this.handleItemsChange.bind(this);
   }
-
+  
+  dataStorage() {    
+    let recipes = [{title: "Salad", ingreds: ["Lettuce", " Green Onion", " Sweet Peppers", " Tomatoes", " Extra-virgin Olive Oil", " Lemon Juice", " Salt"]}, {title: "Vanilla Pancakes", ingreds: ["Flour", " Milk", " Eggs", " Vanilla", " Salt", " 3 Cubes of Brown Sugar"]}, {title: "Pork ribs in Chinese sauce", ingreds: ["Pork ribs", " Mushrooms", " Bamboo", " Garlic", " Soy sauce", " Chinese seasoning"]}];
+    localStorage.setItem("recipeBox", JSON.stringify(recipes));
+    let storedRecipes = JSON.parse(localStorage.getItem("recipeBox"));
+    this.setState({
+      box: storedRecipes
+    });
+  }
+  
+  storageUpdater() {
+    
+  }
+  
+  componentDidMount() {
+    this.dataStorage();
+  }
+  
   handleNameChange(event) {
     this.setState({
       nameInput: event.target.value
     });
   }
-
+  
   handleItemsChange(event) {
     this.setState({
       itemsInput: event.target.value
@@ -257,6 +282,11 @@ class BoxApp extends React.Component {
   }
   
   handleClose() {
+    $("#recipeModalLabel").text("Add a new recipe");
+    $("#add").removeClass("btn-save");
+    $("#add").addClass("btn-add");
+    $("#add").html("<i class='fas fa-plus-circle'/> Recipe");
+    $('#recipe-name').css('background', '#fff');
     this.setState({
       nameInput: "",
       itemsInput: ""
@@ -264,6 +294,10 @@ class BoxApp extends React.Component {
   }
   
   handleEdit(event) {
+    $("#recipeModalLabel").text("Edit recipe");
+    $("#add").removeClass("btn-add");
+    $("#add").addClass("btn-save");
+    $("#add").text("Save");
     let recipe = document.getElementById(event.target.value);    
     this.setState({
       nameInput: event.target.value,
@@ -292,33 +326,46 @@ class BoxApp extends React.Component {
   addNewRecipe() {
     let name = this.state.nameInput;
     let items = this.state.itemsInput.split(","); // ingredients array
-    
-    function blockDuplicates(arr, attr, val) {
-      for (let i = arr.length; i--;) {
-        if (arr[i][attr] === val) 
-          return true;
-      }
-      return false;
-    };
     //console.log(name);
     //console.log(items);
     
-    if (!blockDuplicates(this.state.box, 'title', name)) {
-      if (name === "") {
-        name = "Untitled recipe";
-        this.setState({
-          box: [...this.state.box, { title: name, ingreds: items }]
-        });
-      } else {
-        this.setState({
-          box: [...this.state.box, { title: name, ingreds: items }]
-        });
+    function checkIfExists(arr, attr1, attr2, val) {
+      for (let i = arr.length; i--;) {
+        if (arr[i][attr1] === val) {
+          arr[i][attr2] = items;
+          return true; //the recipe exists already in the box
+        }          
       }
+      return false; //the recipe is new
+    };
+    
+    //checking if the recipe-name input field is empty
+    if (name === "") {
+      $('.modal').modal(); //calls the modal dialog
+      setTimeout(() => {
+        if ($('#recipe-name').val() === "") { //if empty
+          $('#recipe-name').css('background', '#ffccd0'); //make the input field redish to prompt the user to add a name to the recipe
+          return false;
+        } else {
+          $('#recipe-name').css('background', '#fff'); // all is well, nothing is changed
+        }
+      }, 10);
+    } else if (!checkIfExists(this.state.box, 'title', 'ingreds', name)) { //calls the checkifExists() func with 3 specific args
+      this.setState({
+        box: [...this.state.box, {title: name, ingreds: items}]
+      });
     }
   }
 
   handleSubmit() {
-    this.addNewRecipe();
+    this.addNewRecipe();    
+    //resets the modal title and primary button label on submit
+    $("#recipeModalLabel").text("Add a new recipe");//modal title
+    $("#add").removeClass("btn-save");
+    $("#add").addClass("btn-add");
+    $("#add").html("<i class='fas fa-plus-circle'/> Recipe");//modal primary button label
+    //resets the style for the #recipe-name input
+    $('#recipe-name').css('background', '#fff');
     this.setState({
       nameInput: "",
       itemsInput: ""
@@ -326,15 +373,15 @@ class BoxApp extends React.Component {
   }
 
   render() {
-    console.log(this.state.nameInput);
-    console.log(this.state.itemsInput);
+    //Logs
+    //console.log(this.state.nameInput);
+    //console.log(this.state.itemsInput);
     console.log(this.state.box);
-    console.log(this.state.entry);
+    //console.log(this.state.entry);
+    
     const {
       nameInput,
       itemsInput,
-      nameOutput,
-      itemsOutput,
       box,
       entry
     } = this.state;
@@ -349,16 +396,12 @@ class BoxApp extends React.Component {
           itemsInput={itemsInput}
           handleItemsChange={this.handleItemsChange}
           handleSubmit={this.handleSubmit}
-          nameOutput={nameOutput}
-          itemsOutput={itemsOutput}
           box={box}
           />
         <div className="box">
           <Accordion
             nameInput={nameInput}
             itemsInput={itemsInput}
-            nameOutput={nameOutput}
-            itemsOutput={itemsOutput}
             box={box}
             entry={entry}
             handleEdit={this.handleEdit}
@@ -371,13 +414,14 @@ class BoxApp extends React.Component {
         <div className="button text-center">
           <button
             type="button"
-            className="btn-all btn-add"
+            className="btn-all btn-start"
             data-toggle="modal"
             data-target="#recipeModal"
             >
             <i className="fas fa-plus-circle" /> Recipe
           </button>
         </div>
+        <Footer />
       </div>
     );
   }
