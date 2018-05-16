@@ -38,14 +38,27 @@ SOFTWARE. */
 }
 
 body {
-  
+  font-family: "Merienda One", cursive;
 }
 
-#title {  
-  font-family: 'Lobster', cursive;
+#title {
   color: #343a40;
   margin: 0 auto;
   margin-top: 200px;
+}
+
+#footer {
+  h6 {
+  }
+  margin-top: 150px;
+}
+
+.fa-free-code-camp {
+  font-size: 18px;
+}
+
+.fa-codepen {
+  font-size: 16px;
 }
 
 .box {
@@ -98,11 +111,9 @@ body {
 }
 
 .edit {
-  font-family: 'Lobster', cursive;
 }
 
 .ingreds {
-  font-family: 'Lobster', cursive;
   color: #343a40;
   h5 {
     font-size: 16px;
@@ -130,7 +141,6 @@ body {
 }
 
 .panel-title {
-  font-family: 'Lobster', cursive;
   font-weight: normal;
   font-size: 18px;
   color: #343a40;
@@ -164,58 +174,113 @@ body {
 }
 
 .btn-all {
-  margin-left: 5px;
-  border: 2px solid #343a40;
+  margin-left: 5px;  
   @include radius(50px);
   font-size: 14px;
   padding: 4px 10px 4px 10px;
 }
 
+.btn-start {
+  border: 2px solid #343a40;
+  color: #343a40;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-start:hover {
+  color: #f2f2f2;
+  background-color: #343a40;
+  transition: .2s;  
+}
+
+.btn-start:active, .btn-start:focus {
+  @include box-shadow(0px, 0px, 0px, 3px, #aab7c4);
+  transition: .2s;  
+}
+
 .btn-add {
+  border: 1px solid #343a40;
   color: #343a40;
   background-color: transparent;
   transition: .2s;
 }
 
 .btn-add:hover {
+  border: 1px solid #007bff;
   color: #f2f2f2;
-  background-color: #343a40;
-  transition: .2s;
-  
-}
-
-.btn-add:active {
-  border: 2px solid #aab7c4;
-  color: #f2f2f2;
-  background-color: #343a40;
+  background-color: #007bff;
   transition: .2s;  
 }
 
+.btn-add:active, .btn-add:focus {
+  border: 1px solid #007bff;
+  @include box-shadow(0px, 0px, 0px, 3px, #7fbcfd);
+  transition: .2s;  
+}
+ 
 .btn-close {
-  opacity: .5;
-  color: #343a40;
+  border: 1px solid #6c757d;
+  opacity: .6;
+  color: #6c757d;
   background-color: transparent;
   transition: .2s;
 }
 
 .btn-close:hover {
-  opacity: .5;
+  opacity: .6;
   color: #f2f2f2;
-  background-color: #343a40;
+  background-color: #6c757d;
   transition: .2s;  
 }
 
-.btn-close:active {
-  opacity: .5;
-  border: 2px solid #999;
+.btn-close:active, .btn-close:focus {
+  opacity: .6;
+  border: 1px solid #6c757d;
+  @include box-shadow(0px, 0px, 0px, 3px, #b5b9bd);
+  transition: .2s;  
+}
+
+.btn-save {
+  border: 1px solid #28a745;
+  color: #28a745;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-save:hover {
   color: #f2f2f2;
-  background-color: #343a40;
+  background-color: #28a745;
+  transition: .2s;  
+}
+
+.btn-save:active, .btn-save:focus {
+  border: 1px solid #28a745;
+  @include box-shadow(0px, 0px, 0px, 3px, #92d2a6);
+  transition: .2s;  
+}
+
+.btn-edit {
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  background-color: transparent;
+  transition: .2s;
+}
+
+.btn-edit:hover {
+  color: #f2f2f2;
+  background-color: #6c757d;
+  transition: .2s;  
+}
+
+.btn-edit:active, .btn-edit:focus {
+  border: 1px solid #6c757d;
+  @include box-shadow(0px, 0px, 0px, 3px, #b5b9bd);
   transition: .2s;  
 }
 
 .btn-del {
+  border: 1px solid #dc3545;
   color: #dc3545;
-  border-color: #dc3545;
   background-color: transparent;
   transition: .2s;
 }
@@ -226,10 +291,9 @@ body {
   transition: .2s;  
 }
 
-.btn-del:active {
-  border: 2px solid #ffadad;
-  color: #f2f2f2;
-  background-color: #dc3545;
+.btn-del:active, .btn-del:focus {
+  border: 1px solid #dc3545;
+  @include box-shadow(0px, 0px, 0px, 3px, #ffadad);
   transition: .2s;  
 }
 
@@ -253,21 +317,18 @@ button:focus {
   }
 }
 
-.form-control {
-  font-size: 16px;
-}
 
 #ingredients-text {
-  height: 118px;
+  height: 120px;
 }
 
 .modal-content {
   /*background: #343a40;
   color: #fefefe;*/
   margin: 0 auto;
-  margin-top: 246px;
-  width: 425px;
-  border: 3px solid #555;
+  margin-top: 248px;
+  width: 422px;
+  
   @include radius(20px);
   @include box-shadow(0px, 0px, 20px, 0px, #333);
 }
@@ -281,17 +342,18 @@ button:focus {
 }
 
 .form-control {
+  font-size: 16px;
+  border: 1px solid #ced4da;
   transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 }
 
 .form-control:focus {
-  border: 1px solid #00d8ff;
-  @include box-shadow(0px, 0px, 0px, 2px, #aff1ff);
+  border: 1px solid #7abbfd;
+  @include box-shadow(0px, 0px, 0px, 3px, #bfddfe);
   transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
 }
 
 .add-edit {
-  font-family: 'Lobster', cursive;
 }
 
 .box::-webkit-scrollbar {
