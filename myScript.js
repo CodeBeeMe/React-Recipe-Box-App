@@ -27,7 +27,7 @@ SOFTWARE. */
 const Title = () => {
   return (
     <div id="title" className="text-center">
-      <h1>- The Recipe Box -</h1>
+      <h2>- The Recipe Box -</h2>
     </div>
   );
 };
@@ -35,13 +35,12 @@ const Title = () => {
 //Footer
 const Footer = () => {
   return (
-    <div id="footer" className="text-center">
+    <div id="footer" className="navbar-fixed-bottom text-center">
       <h6>Designed and coded by <a href="https://github.com/Madness2aMaze" target="_blank" id="footbar" title="©2018 Cătălin Anghel-Ursu @Madness2aMaze - All Rights Reserved">@Madness2aMaze ©2018 - All Rights Reserved</a> | <a href="http://codepen.io/Madness2aMaze/" title="More of my works" target="_blank"><i className="fab fa-codepen"></i></a> | <a href="https://www.freecodecamp.com/" target="_blank" title="FreeCodeCamp" ><i className="fab fa-free-code-camp"></i></a>
       </h6>
     </div>
   );
 };
-
 
 class Modal extends React.Component {
   constructor(props) {
@@ -235,7 +234,7 @@ class Accordion extends React.Component {
 }
 
 class BoxApp extends React.Component {
-  constructor(props) {
+  constructor(props) {   
     super(props);
     this.state = {
       nameInput: "",
@@ -252,21 +251,35 @@ class BoxApp extends React.Component {
     this.handleItemsChange = this.handleItemsChange.bind(this);
   }
   
-  dataStorage() {    
-    let recipes = [{title: "Salad", ingreds: ["Lettuce", " Green Onion", " Sweet Peppers", " Tomatoes", " Extra-virgin Olive Oil", " Lemon Juice", " Salt"]}, {title: "Vanilla Pancakes", ingreds: ["Flour", " Milk", " Eggs", " Vanilla", " Salt", " 3 Cubes of Brown Sugar"]}, {title: "Pork ribs in Chinese sauce", ingreds: ["Pork ribs", " Mushrooms", " Bamboo", " Garlic", " Soy sauce", " Chinese seasoning"]}];
-    localStorage.setItem("recipeBox", JSON.stringify(recipes));
-    let storedRecipes = JSON.parse(localStorage.getItem("recipeBox"));
-    this.setState({
-      box: storedRecipes
-    });
-  }
-  
-  storageUpdater() {
     
+  // saves the state to the browser's localStorage with the Key "_Madness2aMaze_recipes"
+  saveToLocalStorage() {
+    setTimeout(() => {
+      localStorage.setItem("_Madness2aMaze_recipes", JSON.stringify(this.state.box));
+    },100);    
   }
   
-  componentDidMount() {
-    this.dataStorage();
+  // updates the state with the Value (storedRecipes) from the localStorage Key ("_Madness2aMaze_recipes")
+  getFromLocalStorage() {
+    // default value ready to be loaded on first app load
+    let defaultRecipes = [{title: "Salad", ingreds: ["Lettuce", " Green Onion", " Sweet Peppers", " Tomatoes", " Extra-virgin Olive Oil", " Lemon Juice", " Salt"]}, {title: "Pizza Carbonara", ingreds: ["Pizza dough", " White sauce", " Mozzarella", " Gorgonzola", " Bacon", " Parmesan"]}, { title: "Vanilla Pancakes", ingreds: [ "Flour", " Milk", " Eggs", " Vanilla", " Salt", " 3 Cubes of Brown Sugar"]}];
+    
+    // value stored for the "_Madness2aMaze_recipes" Key
+    let storedRecipes = JSON.parse(localStorage.getItem("_Madness2aMaze_recipes"));
+    
+    if (typeof localStorage["_Madness2aMaze_recipes"] != "undefined") {
+      this.setState({
+        box: storedRecipes
+      });
+    } else {
+      this.setState({
+        box: defaultRecipes
+      });
+    }
+  }
+  
+  componentDidMount() {   
+    this.getFromLocalStorage();
   }
   
   handleNameChange(event) {
@@ -303,6 +316,7 @@ class BoxApp extends React.Component {
       nameInput: event.target.value,
       itemsInput: recipe.dataset.items
     });
+    this.saveToLocalStorage();
   }
 
   handleDelete(event) {
@@ -320,11 +334,13 @@ class BoxApp extends React.Component {
       };
       this.setState({
         box: removeByAttr(this.state.box, "title", this.state.entry)
-      }); }, 10);
+      });
+      this.saveToLocalStorage();
+    }, 10);
   }
 
   addNewRecipe() {
-    let name = this.state.nameInput;
+    let name = this.state.nameInput; // name of the recipe
     let items = this.state.itemsInput.split(","); // ingredients array
     //console.log(name);
     //console.log(items);
@@ -353,12 +369,13 @@ class BoxApp extends React.Component {
     } else if (!checkIfExists(this.state.box, 'title', 'ingreds', name)) { //calls the checkifExists() func with 3 specific args
       this.setState({
         box: [...this.state.box, {title: name, ingreds: items}]
-      });
-    }
+      });      
+    }    
   }
 
   handleSubmit() {
-    this.addNewRecipe();    
+    this.addNewRecipe();
+    this.saveToLocalStorage();
     //resets the modal title and primary button label on submit
     $("#recipeModalLabel").text("Add a new recipe");//modal title
     $("#add").removeClass("btn-save");
@@ -376,7 +393,7 @@ class BoxApp extends React.Component {
     //Logs
     //console.log(this.state.nameInput);
     //console.log(this.state.itemsInput);
-    console.log(this.state.box);
+    //console.log(this.state.box);
     //console.log(this.state.entry);
     
     const {
@@ -428,4 +445,3 @@ class BoxApp extends React.Component {
 }
 
 ReactDOM.render(<BoxApp />, document.getElementById("content"));
-
